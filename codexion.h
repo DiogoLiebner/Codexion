@@ -83,14 +83,21 @@
 	|	├── 
 	|	├── 
     |
-    |
     ├── dongle.c
     |   ├── void acquire_dongle(t_coder *coder, t_dongle *dongle)
     |   └── void release_dongle(t_coder *coder, t_dongle *dongle)
-    
+	|
     ├── threads.c
     |   ├── int start_threads(t_simulation *sim)
     |   └── void stop_threads(t_simulation *sim)
+	|
+	├── scheduler.c
+    |   ├── int entry_compare(t_queue_entry *entry1, t_queue_entry *entry2, int scd_type)
+    |   ├── static void bubble_up(t_queue_entry *queue, int size, int scd_type)
+	|   ├── static void bubble_down(t_queue_entry *queue, int size, int scd_type)
+	|   ├── void heap_insert(t_dongle *dongle, t_queue_entry entry, int scd_type)
+	|   ├── t_queue_entry heap_pop(t_dongle *dongle, int scd_type)
+	|	└── t_queue_entry heap_peek(t_dongle *dongle)
 */
 
 typedef struct s_simulation t_simulation;
@@ -108,7 +115,7 @@ typedef struct s_dongle{
 	t_queue_entry	*wait_queue;
 	int				queue_size;
 	pthread_mutex_t dongle_state;
-	pthread_cond_t cond_var;
+	pthread_cond_t	cond_var;
 }	t_dongle;
 
 typedef struct s_coder{
@@ -139,16 +146,24 @@ typedef struct s_simulation{
 	t_dongle		*dongles;
 }	t_simulation; 
 
-int parse_main(char **argv, t_simulation *sim);
+int				parse_main(char **argv, t_simulation *sim);
 
-int init_simulation(t_simulation *sim);
-void cleanup(t_simulation *sim, int initialized_dongles);
+int				init_simulation(t_simulation *sim);
+void			cleanup(t_simulation *sim, int initialized_dongles);
 
-long get_time_ms(void);
+long			get_time_ms(void);
 
-void *coder_thread(void *arg);
+void			*coder_thread(void *arg);
 
-int start_threads(t_simulation *sim);
-void stop_threads(t_simulation *sim);
+int				start_threads(t_simulation *sim);
+void			stop_threads(t_simulation *sim);
+
+void			acquire_dongle(t_coder *coder, t_dongle *dongle);
+void			release_dongle(t_dongle *dongle);
+
+int				entry_compare(t_queue_entry *entry1, t_queue_entry *entry2, int scd_type);
+void			heap_insert(t_dongle *dongle, t_queue_entry entry, int scd_type);
+t_queue_entry	heap_pop(t_dongle *dongle, int scd_type);
+t_queue_entry	heap_peek(t_dongle *dongle);
 
 #endif
