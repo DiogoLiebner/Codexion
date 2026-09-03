@@ -1,4 +1,4 @@
-#include "codexion"
+#include "codexion.h"
 
 int main(int argc, char **argv)
 {
@@ -9,13 +9,21 @@ int main(int argc, char **argv)
 		fprintf(stderr, "Error: Invalid number of arguments\n");
 		return (1);
 	}
-	else
-		if (parse_main(argv, &simulation))
-			return (1);
-		if (init_simulation(&simulation))
-		{
-			fprintf(stderr, "Error: initializatino failed\n");
-			return (1);
-		}
+	if (parse_main(argv, &simulation))
+		return (1);
+	if (init_simulation(&simulation))
+	{
+		fprintf(stderr, "Error: initialization failed\n");
+		return (1);
+	}
+	simulation.start_time = get_time_ms();
+	if (start_threads(&simulation))
+	{
+		fprintf(stderr, "Error: Thread creation failed\n");
+		return (1);
+	}
+	stop_threads(&simulation);
+	cleanup(&simulation, simulation.n_coders);
+
 	return (0);
 }

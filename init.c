@@ -46,7 +46,7 @@ static int init_coders(t_simulation *sim, t_coder *coder, int id)
 {
 	coder->left_dongle = &sim->dongles[id];
 	coder->right_dongle = &sim->dongles[(id + 1) % sim->n_coders];
-	coder->coder_id = id;
+	coder->coder_id = id + 1;
 	coder->timestamp_lastcompile = 0;
 	coder->compile_count = 0;
 	coder->sim = sim;
@@ -58,7 +58,6 @@ int init_simulation(t_simulation *sim)
 	int	i;
 
 	i = 0;
-	sim->start_time = get_time_ms();
 	if (pthread_mutex_init(&sim->log_mutex, NULL) != 0)
 		return (1);
 	if (pthread_mutex_init(&sim->stop_mutex, NULL) != 0)
@@ -90,7 +89,7 @@ int init_simulation(t_simulation *sim)
 		return (1);
     }
 	sim->simulation_done = 0;
-	while (i <= sim->n_coders)
+	while (i < sim->n_coders)
 	{
 		if (init_dongles(sim, &sim->dongles[i], i))
 		{

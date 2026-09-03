@@ -58,6 +58,40 @@
 # include <string.h>
 # include <stdlib.h>
 # include <sys/time.h>
+# include <unistd.h>
+
+/*
+	├── codexion.c
+	|	├── int main(int argc, char **argv)
+	|
+	├── parsing.c
+    |	├── int parse_main(char **argv, t_simulation *sim)
+    |	├── static int parse_scheduler(char *str)
+    |	└── static int is_valid_integer(char *str)
+	|
+	├── init.c
+	|	├── static int init_coders(t_simulation *sim, t_coder *coder, int id)
+	|	├── static int init_dongles(t_simulation *sim, t_dongle *dongle, int id)
+	|	├── int init_simulation(t_simulation *sim)
+	|	└── void cleanup(t_simulation *sim, int initialized_dongles)
+	|
+	├── utils.c
+	|	├── long get_time_ms(void)
+	|
+	├── coder.c
+	|	├── void *coder_thread(void *arg)
+	|	├── 
+	|	├── 
+    |
+    |
+    ├── dongle.c
+    |   ├── void acquire_dongle(t_coder *coder, t_dongle *dongle)
+    |   └── void release_dongle(t_coder *coder, t_dongle *dongle)
+    
+    ├── threads.c
+    |   ├── int start_threads(t_simulation *sim)
+    |   └── void stop_threads(t_simulation *sim)
+*/
 
 typedef struct s_simulation t_simulation;
 
@@ -84,6 +118,7 @@ typedef struct s_coder{
 	long			timestamp_lastcompile;
 	int				compile_count;
 	t_simulation	*sim;
+    pthread_t       thread;
 }	t_coder;
 
 typedef struct s_simulation{
@@ -96,36 +131,13 @@ typedef struct s_simulation{
 	int				dongle_cooldown;
 	int				scheduler;
 	int		 		simulation_done;
+    long            start_time;
 	pthread_mutex_t	log_mutex;
 	pthread_mutex_t	stop_mutex;
 	pthread_cond_t	stop_cond;
 	t_coder			*coders;
 	t_dongle		*dongles;
-}	t_simulation;
-
-/*
-	├── codexion.c
-	|	├── int main(int argc, char **argv)
-	|
-	├── parsing.c
-    |	├── int parse_main(char **argv, t_simulation *sim)
-    |	├── static int parse_scheduler(char *str)
-    |	└── static int is_valid_integer(char *str)
-	|
-	├── init.c
-	|	├── static int init_coders(t_simulation *sim, t_coder *coder, int id)
-	|	├── static int init_dongles(t_simulation *sim, t_dongle *dongle, int id)
-	|	├── int init_simulation(t_simulation *sim)
-	|	└── void cleanup(t_simulation *sim, int initialized_dongles)
-	|
-	├── utils.c
-	|	├── long get_time_ms(void)
-	|
-	├── coder.c
-	|	├── 
-	|	├── 
-	|	├── 
-*/ 
+}	t_simulation; 
 
 int parse_main(char **argv, t_simulation *sim);
 
@@ -133,5 +145,10 @@ int init_simulation(t_simulation *sim);
 void cleanup(t_simulation *sim, int initialized_dongles);
 
 long get_time_ms(void);
+
+void *coder_thread(void *arg);
+
+int start_threads(t_simulation *sim);
+void stop_threads(t_simulation *sim);
 
 #endif
