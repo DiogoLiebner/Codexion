@@ -21,10 +21,14 @@ void *coder_thread(void *arg)
 		if (coder->coder_id % 2 == 0)
 		{
 			acquire_dongle(coder, coder->right_dongle);
+			if (coder->interrupted)
+				return (NULL);
 			pthread_mutex_lock(&coder->sim->log_mutex);
 			printf("%ld %d has taken a dongle\n", (get_time_ms() - coder->sim->start_time), coder->coder_id);
 			pthread_mutex_unlock(&coder->sim->log_mutex);
 			acquire_dongle(coder, coder->left_dongle);
+			if (coder->interrupted)
+				return (NULL);
 			pthread_mutex_lock(&coder->sim->log_mutex);
 			printf("%ld %d has taken a dongle\n", (get_time_ms() - coder->sim->start_time), coder->coder_id);
 			pthread_mutex_unlock(&coder->sim->log_mutex);
@@ -32,10 +36,14 @@ void *coder_thread(void *arg)
 		else
 		{
 			acquire_dongle(coder, coder->left_dongle);
+			if (coder->interrupted)
+				return (NULL);
 			pthread_mutex_lock(&coder->sim->log_mutex);
 			printf("%ld %d has taken a dongle\n", (get_time_ms() - coder->sim->start_time), coder->coder_id);
 			pthread_mutex_unlock(&coder->sim->log_mutex);
 			acquire_dongle(coder, coder->right_dongle);
+			if (coder->interrupted)
+				return (NULL);
 			pthread_mutex_lock(&coder->sim->log_mutex);
 			printf("%ld %d has taken a dongle\n", (get_time_ms() - coder->sim->start_time), coder->coder_id);
 			pthread_mutex_unlock(&coder->sim->log_mutex);

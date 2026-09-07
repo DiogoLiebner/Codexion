@@ -120,12 +120,13 @@ typedef struct s_dongle{
 
 typedef struct s_coder{
 	int				coder_id;
+	int				compile_count;
+	int				interrupted;
+	long			timestamp_lastcompile;
+	pthread_t		thread;
 	t_dongle		*left_dongle;
 	t_dongle		*right_dongle;
-	long			timestamp_lastcompile;
-	int				compile_count;
 	t_simulation	*sim;
-    pthread_t       thread;
 }	t_coder;
 
 typedef struct s_simulation{
@@ -139,6 +140,7 @@ typedef struct s_simulation{
 	int				scheduler;
 	int		 		simulation_done;
     long            start_time;
+    pthread_t       monitor;
 	pthread_mutex_t	log_mutex;
 	pthread_mutex_t	stop_mutex;
 	pthread_cond_t	stop_cond;
@@ -165,5 +167,7 @@ int				entry_compare(t_queue_entry *entry1, t_queue_entry *entry2, int scd_type)
 void			heap_insert(t_dongle *dongle, t_queue_entry entry, int scd_type);
 t_queue_entry	heap_pop(t_dongle *dongle, int scd_type);
 t_queue_entry	heap_peek(t_dongle *dongle);
+
+void            *monitor_thread(void *arg);
 
 #endif

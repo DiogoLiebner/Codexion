@@ -11,7 +11,7 @@ static int is_valid_integer(char *str)
 	{
 		if (str[i] < '0' || str[i] > '9')
 			return 0;
-		i++;	
+		i++;
 	}
 	return 1;
 }
@@ -35,7 +35,7 @@ int parse_main(char **argv, t_simulation *sim)
 
 	while (i < 8)
 	{
-		if (!(is_valid_integer(argv[i]) && atoi(argv[i]) > 0))
+		if (!(is_valid_integer(argv[i]) && atoi(argv[i]) >= 0))
 		{
 			fprintf(stderr, "Error: invalid argument '%s'\n", argv[i]);
 			return (1);

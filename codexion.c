@@ -16,7 +16,6 @@ int main(int argc, char **argv)
 		fprintf(stderr, "Error: initialization failed\n");
 		return (1);
 	}
-	simulation.start_time = get_time_ms();
 	if (start_threads(&simulation))
 	{
 		fprintf(stderr, "Error: Thread creation failed\n");

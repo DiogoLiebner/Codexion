@@ -22,6 +22,10 @@ int start_threads(t_simulation *sim)
 		j = i;
 		i++;
 	}
+    if (pthread_create(&sim->monitor, NULL, monitor_thread, sim) != 0)
+    {
+        return (1);
+    }
 	return (0);
 }
 
@@ -35,4 +39,5 @@ void stop_threads(t_simulation *sim)
 		pthread_join(sim->coders[i].thread, NULL);
 		i--;
 	}
+    pthread_join(sim->monitor, NULL);
 }
