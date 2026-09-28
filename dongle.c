@@ -18,11 +18,6 @@ void acquire_dongle(t_coder *coder, t_dongle *dongle)
 	pthread_mutex_lock(&dongle->dongle_state);
 	entry.request_time = get_time_ms();
 
-	printf("coder %d inserting with deadline %ld, timestamp_lastcompile %ld\n", 
-    coder->coder_id, 
-    entry.deadline,
-    coder->timestamp_lastcompile);
-
 	heap_insert(dongle, entry, coder->sim->scheduler);
 	while(!dongle->is_available
 		|| get_time_ms() < dongle->timestamp_released + coder->sim->dongle_cooldown
@@ -31,8 +26,7 @@ void acquire_dongle(t_coder *coder, t_dongle *dongle)
 		wake_time = dongle->timestamp_released + coder->sim->dongle_cooldown;
 		ts.tv_sec = wake_time / 1000;
 		ts.tv_nsec = (wake_time % 1000) * 1000000;
-		pthread_cond_timedwait(&dongle->cond_var, &dongle->dongle_state, &ts);
-		pthread_mutex_lock(&coder->sim->stop_mutex);
+        pthread_mutex_lock(&coder->sim->stop_mutex);
 		if (coder->sim->simulation_done)
 		{
 			coder->interrupted = 1;
@@ -41,6 +35,7 @@ void acquire_dongle(t_coder *coder, t_dongle *dongle)
 			return ;
 		}
 		pthread_mutex_unlock(&coder->sim->stop_mutex);
+		pthread_cond_timedwait(&dongle->cond_var, &dongle->dongle_state, &ts);
 	}
 	heap_pop(dongle, coder->sim->scheduler);
 	dongle->is_available = 0;

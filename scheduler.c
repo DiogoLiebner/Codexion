@@ -97,9 +97,12 @@ t_queue_entry heap_pop(t_dongle *dongle, int scd_type)
 {
 	t_queue_entry saved;
 	saved = dongle->wait_queue[0];
-	dongle->wait_queue[0] = dongle->wait_queue[dongle->queue_size];
-	dongle->queue_size = dongle->queue_size - 1;
-	bubble_down(dongle->wait_queue, dongle->queue_size, scd_type);
+    dongle->queue_size--;
+    if (dongle->queue_size > 0)
+    {
+        dongle->wait_queue[0] = dongle->wait_queue[dongle->queue_size];
+        bubble_down(dongle->wait_queue, dongle->queue_size, scd_type);
+    }
 	return (saved);
 }
 
