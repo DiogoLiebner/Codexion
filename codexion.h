@@ -10,7 +10,7 @@
 
 /*
 	├── codexion.c
-	|	├── int main(int argc, char **argv)
+	|	└── int main(int argc, char **argv)
 	|
 	├── parsing.c
     |	├── int parse_main(char **argv, t_simulation *sim)
@@ -24,12 +24,10 @@
 	|	└── void cleanup(t_simulation *sim, int initialized_dongles)
 	|
 	├── utils.c
-	|	├── long get_time_ms(void)
+	|	└── long get_time_ms(void)
 	|
 	├── coder.c
-	|	├── void *coder_thread(void *arg)
-	|	├── 
-	|	├── 
+	|	└── void *coder_thread(void *arg)
     |
     ├── dongle.c
     |   ├── void acquire_dongle(t_coder *coder, t_dongle *dongle)
